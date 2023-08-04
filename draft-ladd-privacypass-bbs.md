@@ -12,9 +12,7 @@ v: 3
 area: "Security"
 workgroup: "Privacy Pass"
 keyword:
- - next generation
- - unicorn
- - sparkling distributed ledger
+ - anonymous credentials
 venue:
   group: "Privacy Pass"
   type: "Working Group"
@@ -25,8 +23,8 @@ venue:
 
 author:
  -
-    fullname: Your Name Here
-    organization: Your Organization Here
+    fullname: Watson Ladd
+    organization: Akamai Technologies
     email: "watsonbladd@gmail.com"
 
 normative:
@@ -36,15 +34,13 @@ informative:
 
 --- abstract
 
-TODO Abstract
-
+Existing token types in privacy pass conflate attribution with rate limiting. This document describes a token type where the issuer attests to a set of properties of the client, which the client can then selectively prove to the origin. Repeated showings of the same credential are unlinkable, unlike other token types in privacy pass.
 
 --- middle
 
 # Introduction
 
-TODO Introduction
-
+In 2004 Boneh-Boyen-Shacham introduced the eponymous BBS signature. The BBS signature scheme as documented in {{draft-irtf-cfrg-bbs-signatures}} lets a signer sign a sequence of strings called attributes, and provides a way for a holder of a signature to prove possession and the value of some of the attributes.
 
 # Conventions and Definitions
 
