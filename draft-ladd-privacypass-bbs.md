@@ -40,7 +40,7 @@ Existing token types in privacy pass conflate attribution with rate limiting. Th
 
 # Introduction
 
-In 2004 Boneh-Boyen-Shacham introduced the eponymous BBS signature. The BBS signature scheme as documented in {{draft-irtf-cfrg-bbs-signatures-03}} lets a signer sign a sequence of strings called attributes, and provides a way for a holder of a signature to prove possession and the value of some of the attributes.
+In 2004 Boneh-Boyen-Shacham introduced the eponymous BBS signature. The BBS signature scheme as documented in {{I-D.draft-irtf-cfrg-bbs-signatures-03}} lets a signer sign a sequence of strings called attributes, and provides a way for a holder of a signature to prove possession and the value of some of the attributes.
 
 # Conventions and Definitions
 
@@ -49,8 +49,7 @@ In 2004 Boneh-Boyen-Shacham introduced the eponymous BBS signature. The BBS sign
 
 # Security Considerations
 
-TODO Security
-
+The position of a revealed attribute, as well as the number of unrevealed attributes, is revealed to the origin. Applications MUST ensure all clients recieve the same set of attributes in the same positions. 
 
 # IANA Considerations
 
