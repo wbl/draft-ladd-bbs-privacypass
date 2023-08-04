@@ -57,7 +57,7 @@ The Attestor interaction and validation of the attributes is not specified here.
 For a client to show a set of attributes they execute the ProofGen operation of {{BBS}} with the header set to a specified channel binding or origin identifer. For HTTP applications it is RECOMMENDED that the origin be used. The set of attributes they wish to show is communicated by means outside this draft. They then transmit the signature to the origin as a token.
 
 # Privacy Pass integration
-In {{draft-ietf-privacypass-architecture}} parameters are provided that any instantiation must amend. 
+In {{PPARCH}} parameters are provided that any instantiation must amend. TODO: put values in
 
 # Security Considerations
 
