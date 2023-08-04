@@ -19,8 +19,8 @@
 # Change the file extension to match the format (.xml for XML, etc...)
 #
 ###
-title: "TODO - Your title"
-abbrev: "TODO - Abbreviation"
+title: "BBS for PrivacyPass"
+abbrev: "BBS PPAS"
 category: info
 
 docname: draft-todo-yourname-protocol-latest
@@ -36,7 +36,7 @@ keyword:
  - unicorn
  - sparkling distributed ledger
 venue:
-  group: WG
+  group: PrivacyPass
   type: Working Group
   mail: WG@example.com
   arch: https://example.com/WG
