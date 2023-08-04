@@ -40,7 +40,7 @@ Existing token types in privacy pass conflate attribution with rate limiting. Th
 
 # Introduction
 
-In 2004 Boneh-Boyen-Shacham introduced the eponymous BBS signature. The BBS signature scheme as documented in {{draft-irtf-cfrg-bbs-signatures}} lets a signer sign a sequence of strings called attributes, and provides a way for a holder of a signature to prove possession and the value of some of the attributes. This document explains how to use this technology with privacy pass.
+In 2004 Boneh-Boyen-Shacham introduced the eponymous BBS signature. The BBS signature scheme as documented in {{!BBS=I-D.draft-irtf-cfrg-bbs-signatures}} lets a signer sign a sequence of strings called attributes, and provides a way for a holder of a signature to prove possession and the value of some of the attributes. This document explains how to use this technology with privacy pass.
 
 # Conventions and Definitions
 
@@ -51,10 +51,10 @@ To run this protocol the Issuer must have a public key and an issuance URL, as w
 ## Issuance
 The Client begins by forming a sequence of strings corresponding to the attributes they wish signed. They engage in the Attestation protocol with the Attestor, and then send the serialized array of strings as JSON array of base64 encoded strings to the Issuer. The Issuer returns the signature, again encoded in base64. The Client MUST verify the returned signature.
 
-The Attestor interaction and validation of the attributes is not specified here. In a split instantiation as per {{draft-ietf-privacypass-architecture}}, Attestors and Issuers MUST ensure that the claims by the Client are not changeable between attestation and signing.
+The Attestor interaction and validation of the attributes is not specified here. In a split instantiation as per {{?PPARCH=I-D.draft-ietf-privacypass-architecture}}, Attestors and Issuers MUST ensure that the claims by the Client are not changeable between attestation and signing.
 
 ## Redemption
-For a client to show a set of attributes they execute the ProofGen operation of {{draft-irtf-cfrg-bbs-signatures}} with the header set to a specified channel binding or origin identifer. For HTTP applications it is RECOMMENDED that the origin be used. The set of attributes they wish to show is communicated by means outside this draft. They then transmit the signature to the origin as a token.
+For a client to show a set of attributes they execute the ProofGen operation of {{BBS}} with the header set to a specified channel binding or origin identifer. For HTTP applications it is RECOMMENDED that the origin be used. The set of attributes they wish to show is communicated by means outside this draft. They then transmit the signature to the origin as a token.
 
 # Privacy Pass integration
 In {{draft-ietf-privacypass-architecture}} parameters are provided that any instantiation must amend. 
