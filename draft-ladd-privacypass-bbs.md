@@ -53,7 +53,7 @@ To run this protocol the Issuer must have a public key and an issuance URL, as w
 
 After the successful completion of the Issuance protocol, the Client is able to use the received `TokenResponse` to generate multiple unlinkable tokens.
 
-## Issuance
+## Issuance over generic transports
 
 ### Attribute Values
 
@@ -81,7 +81,7 @@ This section defines a HTTP based instatiation of the issuance and redemption pr
 
 ## Token Issuance
 
-//TODO: Describe Client and Issuer inputs to the protocol
+The Client and Issuer agree on the sequence of attributes, as well as the Issuer's public key. These attributes are put in a list of Extensions {{PPEXT}} with type TBD.
 
 ### Client-to-Issuer Request
 
@@ -216,11 +216,11 @@ In {{PPARCH}} parameters are provided that any instantiation must amend. TODO: p
 
 # Security Considerations
 
-The position of a revealed attribute, as well as the number of unrevealed attributes, is revealed to the origin. Applications MUST ensure all clients recieve the same set of attributes in the same positions. As the redeemed tokens are not single use, instantiations MUST specify a channel binding to use or origin identifier.
+ As the redeemed tokens are not single use, instantiations MUST specify a channel binding to use or origin identifier so that an Origin cannot harvest tokens for use at another origin.
 
 # Privacy Considerations
 
-TODO
+The position of a revealed attribute, as well as the number of unrevealed attributes, is revealed to the origin. Applications MUST ensure all clients recieve the same set of attributes in the same positions to preserve privacy. The Issuer is visible on redemption, this creates partioning attacks. TODO: resolve through hiding them.
 
 # IANA Considerations
 
