@@ -45,20 +45,39 @@ In 2004 Boneh-Boyen-Shacham introduced the eponymous BBS signature. The BBS sign
 # Conventions and Definitions
 
 {::boilerplate bcp14-tagged}
-# Protcol Overview
+# Protocol Overview
+
+This protocol defines the use of Privacy Pass with selectively disclosable attributes, using {{BBS}} signatures and zero-knowledge proofs. Those attributes must be agreed upon by Client, Attester, and Issuer during issuance. Example of such attributes include public metadata values ({{!PPEXT=I-D.draft-hendrickson-privacypass-public-metadata}}).
+
 To run this protocol the Issuer must have a public key and an issuance URL, as well as a common understanding of the meaning of each attribute string (sequence of octets). E.g an age might be encoded as a single octet, or in ASCII numeric base 10 represnetation, or a fixed field, and could be the first attribute in the list.
 
+After the successful completion of the Issuance protocol, the Client is able to use the received `TokenResponse` to generate multiple unlinkable tokens.
+
 ## Issuance
-The Client begins by forming a sequence of strings corresponding to the attributes they wish signed. They engage in the Attestation protocol with the Attestor, and then send the serialized array of strings as JSON array of base64 encoded strings to the Issuer. The Issuer returns the signature, again encoded in base64. The Client MUST verify the returned signature.
+
+### Attribute Values
+
+The Client begins by forming a sequence of strings corresponding to the attributes they wish signed. They engage in the Attestation protocol with the Attestor, and then send the serialized array of attributes to the Issuer. The way with which the list of attributes is communicated to the Issuer is considered protocol specific. An option is to serialize the attributes as a base64 encoded JSON array. The Issuer MUST parse the received attributes list before signing, and verify that each attribute is permitted by their polishes.
 
 The Attestor interaction and validation of the attributes is not specified here. In a split instantiation as per {{?PPARCH=I-D.draft-ietf-privacypass-architecture}}, Attestors and Issuers MUST ensure that the claims by the Client are not changeable between attestation and signing.
 
+### Header Value
+
+Each attribute will be selectively disclosable by the Client during the redemption protocol. Protocol and application critical information (for example, a token type) need to be included in the header input value of the BBS signature generation operation as defined in [Section 3.4.1](https://www.ietf.org/archive/id/draft-irtf-cfrg-bbs-signatures-03.html#name-signature-generation-sign) of {{BBS}}. The header value will not be selectively disclosable, meaning that the Client will be required to reveal it during redemption. For HTTP based applications it is RECOMMENDED to include the token's type to the header. It is also RECOMMENDED the header value to be protocol or application defined. See [](#privacy-considerations) for more information.
+
+### Token Response
+
+If parsing and validating the received attributes was successful, the Issuer can sign them together with the selected header using the signature generation function of {{BBS}}. The Issuer then returns the signature and optionally the selected header (if it is not protocol defined) to the Client. The means with which those values are communicated are considered protocol specific. An option is to encode them using base64. The Client MUST verify the returned signature against their selected set of attributes and header value, using the signature verification operation as defined in [Section 3.4.2](https://www.ietf.org/archive/id/draft-irtf-cfrg-bbs-signatures-03.html#name-signature-verification-veri) of {{BBS}}.
+
 ## Redemption
-For a client to show a set of attributes they execute the ProofGen operation of {{BBS}} with the header set to a specified channel binding or origin identifer. For HTTP applications it is RECOMMENDED that the origin be used. The set of attributes they wish to show is communicated by means outside this draft. They then transmit the signature to the origin as a token.
 
-# HTTP Protocol
+After the received signature is verified, the Client can generate multiple unlinkable tokens, attesting over a (possibly different at each time) subset of the signed attributes. To do that, the Client uses the proof generation operation as defined in [Section 3.4.3](https://www.ietf.org/archive/id/draft-irtf-cfrg-bbs-signatures-03.html#name-proof-generation-proofgen) of {{BBS}}, with the presentation header input value set to a specified channel binding or origin identifier. For HTTP applications it is RECOMMENDED that the origin be used. The presentation header MUST additionally be bound to the received Origin challenge (for example by using the digest of the challenge value). The set of attributes the Client wishes to show is protocol specific and is communicated by means outside this draft.
 
-This section defines a HTTP based issuance and redemption protocol for privacy-pass with public metadata, using BBS signatures. The BBS operations used are instantiated with the parameters defined by the `BBS_BLS12381G1_XMD:SHA-256_SSWU_RO_H2G_HM2S_` ciphersuite ([Section 6.2.2](https://datatracker.ietf.org/doc/html/draft-irtf-cfrg-bbs-signatures-03#name-bls12-381-sha-256) {{BBS}}). The signed attributes will consist of the public metadata values, giving to the Client the ability to selectively disclose distinguee subsets of metadata during different `Token` redemption attempts.
+Upon receiving a Token, the Origin must construct the required header and presentation header values, which may depend on protocol specific information (like the token's type) or session specific information (like a Client chosen nonce). The form of those values is protocol specific. The Origin MUST validate that both the header and presentation header, as well as the received attributes, conform to their policies (for example, that the presentation header contains a specific challenge digest etc.). Then, they can use the proof verification operation as defined in [Section 3.4.4](https://www.ietf.org/archive/id/draft-irtf-cfrg-bbs-signatures-03.html#name-proof-verification-proofver) of {{BBS}}, to verify the received Token and attributes.
+
+# HTTP Protocol with Public Metadata
+
+This section defines a HTTP based instatiation of the issuance and redemption protocol for privacy-pass described in [](#issuance) and [](#redemption), with public metadata ({{PPEXT}}). The BBS operations used are instantiated with the parameters defined by the `BBS_BLS12381G1_XMD:SHA-256_SSWU_RO_H2G_HM2S_` ciphersuite ([Section 6.2.2](https://datatracker.ietf.org/doc/html/draft-irtf-cfrg-bbs-signatures-03#name-bls12-381-sha-256) of {{BBS}}). The signed attributes will consist of the public metadata values, giving to the Client the ability to selectively disclose distinguee subsets of metadata during different `Token` redemption attempts.
 
 ## Token Issuance
 
@@ -80,7 +99,7 @@ The structure fields are defines bellow:
 - "token_type" is a 2-octet integer, which matches the type in the challenge.
 - "truncated_token_key_id" is the least significant byte of the token_key_id in network byte order.
 
-Using the constructed `TokenRequest`, the Client builds an `ExtendedTokenRequest`, defined in {{!PPEXT=I-D.draft-hendrickson-privacypass-public-metadata}}, as follows:
+Using the constructed `TokenRequest`, the Client builds an `ExtendedTokenRequest`, defined in {{PPEXT}}, as follows:
 
 ~~~
 struct {
@@ -192,11 +211,16 @@ res = ProofVerify(pkI,
 The ProofVerify function is defined in Section 3.4.4 of {{BBS}}, instantiated with the parameters defined by the "BLS12-381-SHA-256" ciphersuite ([Section 6.2.2](https://datatracker.ietf.org/doc/html/draft-irtf-cfrg-bbs-signatures-03#name-bls12-381-sha-256) of {{BBS}}).
 
 # Privacy Pass integration
+
 In {{PPARCH}} parameters are provided that any instantiation must amend. TODO: put values in
 
 # Security Considerations
 
 The position of a revealed attribute, as well as the number of unrevealed attributes, is revealed to the origin. Applications MUST ensure all clients recieve the same set of attributes in the same positions. As the redeemed tokens are not single use, instantiations MUST specify a channel binding to use or origin identifier.
+
+# Privacy Considerations
+
+TODO
 
 # IANA Considerations
 
