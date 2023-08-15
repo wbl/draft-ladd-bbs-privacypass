@@ -77,7 +77,7 @@ Upon receiving a Token, the Origin must construct the required header and presen
 
 # HTTP Protocol with Public Metadata
 
-This section defines a HTTP based instatiation of the issuance and redemption protocol for privacy-pass described in [](#issuance) and [](#redemption), with public metadata ({{PPEXT}}). The BBS operations used are instantiated with the parameters defined by the `BBS_BLS12381G1_XMD:SHA-256_SSWU_RO_H2G_HM2S_` ciphersuite ([Section 6.2.2](https://datatracker.ietf.org/doc/html/draft-irtf-cfrg-bbs-signatures-03#name-bls12-381-sha-256) of {{BBS}}). The signed attributes will consist of the public metadata values, giving to the Client the ability to selectively disclose distinguee subsets of metadata during different `Token` redemption attempts.
+This section defines a HTTP based instatiation of the issuance and redemption protocol with public metadata ({{PPEXT}}). The BBS operations used are instantiated with the parameters defined by the `BBS_BLS12381G1_XMD:SHA-256_SSWU_RO_H2G_HM2S_` ciphersuite ([Section 6.2.2](https://datatracker.ietf.org/doc/html/draft-irtf-cfrg-bbs-signatures-03#name-bls12-381-sha-256) of {{BBS}}). The signed attributes will consist of the public metadata values, giving to the Client the ability to selectively disclose distinguee subsets of metadata during different `Token` redemption attempts.
 
 ## Token Issuance
 
