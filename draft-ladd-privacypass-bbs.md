@@ -89,7 +89,7 @@ The Client first creates an issuance request message using the Issuer key identi
 
 ~~~
 struct {
-  uint16_t token_type = 0x0003;  /* Type BBS with "BLS12-381-SHA-256" */
+  uint16_t token_type = 0xTBD;  /* Type BBS with "BLS12-381-SHA-256" */
   uint8_t truncated_token_key_id;
 } TokenRequest;
 ~~~
@@ -181,7 +181,7 @@ If the above calculation succeeds, the Client constructs a `Token` as follows:
 
 ~~~
 struct {
-  uint16_t token_type = 0x0003;
+  uint16_t token_type = 0xTBD;
   uint8_t nonce[32];
   uint8_t challenge_digest[32];
   uint8_t token_key_id[Nid];
@@ -224,8 +224,18 @@ The position of a revealed attribute, as well as the number of unrevealed attrib
 
 # IANA Considerations
 
-This document has no IANA actions.
+We would like IANA to add to the Privacy Pass Token Type Registry the following registration:
 
+Value: IANA picks
+Name: BBS Token
+Token structure: As in Token Generation Section
+Token Key Encoding: TODO
+Publicly Verifiable: Y
+Public Metadata: Y
+Private Metadata: N
+Nk: Indefinite
+NiD: 32? TODO: check this
+Reference: This document
 
 --- back
 
