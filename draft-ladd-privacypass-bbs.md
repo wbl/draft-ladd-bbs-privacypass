@@ -121,7 +121,7 @@ Upon receiving the Client's request, the Issuer needs to validate the following:
 If any of these conditions is not met, the Issuer MUST return an HTTP 400 error to the Client. Otherwise, if the Issuer is willing to produce a token for the Client, they will complete the issuance flow by signing the agreed upon extension values. To do so, they first must parse the content value `ExtendedTokenRequest.extensions` and if successful, yield the extensions array. Then, they must sign those extensions, using the following steps:
 
 ~~~
-header = 0x0003
+header = 0xTBD
 signature = Sign(skI, pkI,  header, extensions)
 ~~~
 
@@ -142,7 +142,7 @@ The Issuer generates an HTTP response with status code 200 whose content consist
 Upon receipt, the Client handles the response and, if successful, deserializes the content values `TokenResponse.signature` yielding the signature value. the Client MUST validate the produced signature as follows:
 
 ~~~
-result = Verify(pkI, signature, 0x0003, extensions)
+result = Verify(pkI, signature, 0xTBD, extensions)
 ~~~
 
 The Verify function is defined in [Section 3.4.2](https://www.ietf.org/archive/id/draft-irtf-cfrg-bbs-signatures-03.html#name-signature-verification-veri) of {{BBS}} and is instantiated with the parameters defined by the "BLS12-381-SHA-256" ciphersuite ([Section 6.2.2](https://datatracker.ietf.org/doc/html/draft-irtf-cfrg-bbs-signatures-03#name-bls12-381-sha-256) of {{BBS}}). If the result is not VALID, the Client MUST abort.
@@ -166,7 +166,7 @@ The Client can also select a subset of the extensions to disclose to the Origin.
 ~~~
 nonce = random(32)
 challenge_digest = SHA256(challenge)
-header = 0x0003
+header = 0xTBD
 presentation_header = concat(nonce, challenge_digest)
 
 authenticator = ProofGen(pkI,
@@ -197,7 +197,7 @@ The maximum length of the authenticator `Nu` is defined as `Nu = 2 * octet_point
 Upon receiving the `Token`, the Origin MUST parse it and validate that all the fields have the correct length. Additionally, the Origin MUST parse the `Token.disclosed_extensions_indexes` content value and verify that it comprised from an ordered array of integers from 1 to 65535. Lastly, the Origin MUST also parse the received (disclosed) `Extensions.extensions` value and create the array `disclosed_extensions`. Verifying a `Token` requires knowledge of the Issuer's public key (pkI) corresponding to the `Token.token_key_id` value. The Origin can verify the `Token` and corresponding disclosed extensions as follows:
 
 ~~~
-header = 0x0003
+header = 0xTBD
 presentation_header = concat(Token.nonce, Token.challenge_digest)
 
 res = ProofVerify(pkI,
