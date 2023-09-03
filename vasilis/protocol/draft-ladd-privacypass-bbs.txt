@@ -1,0 +1,412 @@
+
+
+
+
+Privacy Pass                                                     W. Ladd
+Internet-Draft                                       Akamai Technologies
+Intended status: Informational                             7 August 2023
+Expires: 8 February 2024
+
+
+                          BBS for PrivacyPass
+                   draft-ladd-privacypass-bbs-latest
+
+Abstract
+
+   Existing token types in privacy pass conflate attribution with rate
+   limiting.  This document describes a token type where the issuer
+   attests to a set of properties of the client, which the client can
+   then selectively prove to the origin.  Repeated showings of the same
+   credential are unlinkable, unlike other token types in privacy pass.
+
+About This Document
+
+   This note is to be removed before publishing as an RFC.
+
+   The latest revision of this draft can be found at
+   https://wbl.github.io/draft-ladd-bbs-privacypass/draft-ladd-
+   privacypass-bbs.html.  Status information for this document may be
+   found at https://datatracker.ietf.org/doc/draft-ladd-privacypass-
+   bbs/.
+
+   Discussion of this document takes place on the Privacy Pass Working
+   Group mailing list (mailto:privacy-pass@ietf.org), which is archived
+   at https://mailarchive.ietf.org/arch/browse/privacy-pass/.  Subscribe
+   at https://www.ietf.org/mailman/listinfo/privacy-pass/.
+
+   Source for this draft and an issue tracker can be found at
+   https://github.com/wbl/draft-ladd-bbs-privacypass.
+
+Status of This Memo
+
+   This Internet-Draft is submitted in full conformance with the
+   provisions of BCP 78 and BCP 79.
+
+   Internet-Drafts are working documents of the Internet Engineering
+   Task Force (IETF).  Note that other groups may also distribute
+   working documents as Internet-Drafts.  The list of current Internet-
+   Drafts is at https://datatracker.ietf.org/drafts/current/.
+
+   Internet-Drafts are draft documents valid for a maximum of six months
+   and may be updated, replaced, or obsoleted by other documents at any
+   time.  It is inappropriate to use Internet-Drafts as reference
+   material or to cite them other than as "work in progress."
+
+   This Internet-Draft will expire on 8 February 2024.
+
+Copyright Notice
+
+   Copyright (c) 2023 IETF Trust and the persons identified as the
+   document authors.  All rights reserved.
+
+   This document is subject to BCP 78 and the IETF Trust's Legal
+   Provisions Relating to IETF Documents (https://trustee.ietf.org/
+   license-info) in effect on the date of publication of this document.
+   Please review these documents carefully, as they describe your rights
+   and restrictions with respect to this document.  Code Components
+   extracted from this document must include Revised BSD License text as
+   described in Section 4.e of the Trust Legal Provisions and are
+   provided without warranty as described in the Revised BSD License.
+
+Table of Contents
+
+   1.  Introduction
+   2.  Conventions and Definitions
+   3.  Protcol Overview
+     3.1.  Issuance
+     3.2.  Redemption
+   4.  HTTP Protocol
+     4.1.  Token Issuance
+       4.1.1.  Client-to-Issuer Request
+       4.1.2.  Issuer-to-Client Response
+       4.1.3.  Finalization
+       4.1.4.  Issuer Configuration
+     4.2.  Token Redemption
+       4.2.1.  Token Generation
+       4.2.2.  Token Verification
+   5.  Privacy Pass integration
+   6.  Security Considerations
+   7.  IANA Considerations
+   8.  References
+     8.1.  Normative References
+     8.2.  Informative References
+   Acknowledgments
+   Author's Address
+
+1.  Introduction
+
+   In 2004 Boneh-Boyen-Shacham introduced the eponymous BBS signature.
+   The BBS signature scheme as documented in [BBS] lets a signer sign a
+   sequence of strings called attributes, and provides a way for a
+   holder of a signature to prove possession and the value of some of
+   the attributes.  This document explains how to use this technology
+   with privacy pass.
+
+2.  Conventions and Definitions
+
+   The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
+   "SHOULD", "SHOULD NOT", "RECOMMENDED", "NOT RECOMMENDED", "MAY", and
+   "OPTIONAL" in this document are to be interpreted as described in
+   BCP 14 [RFC2119] [RFC8174] when, and only when, they appear in all
+   capitals, as shown here.
+
+3.  Protcol Overview
+
+   To run this protocol the Issuer must have a public key and an
+   issuance URL, as well as a common understanding of the meaning of
+   each attribute string (sequence of octets).  E.g an age might be
+   encoded as a single octet, or in ASCII numeric base 10
+   represnetation, or a fixed field, and could be the first attribute in
+   the list.
+
+3.1.  Issuance
+
+   The Client begins by forming a sequence of strings corresponding to
+   the attributes they wish signed.  They engage in the Attestation
+   protocol with the Attestor, and then send the serialized array of
+   strings as JSON array of base64 encoded strings to the Issuer.  The
+   Issuer returns the signature, again encoded in base64.  The Client
+   MUST verify the returned signature.
+
+   The Attestor interaction and validation of the attributes is not
+   specified here.  In a split instantiation as per [PPARCH], Attestors
+   and Issuers MUST ensure that the claims by the Client are not
+   changeable between attestation and signing.
+
+3.2.  Redemption
+
+   For a client to show a set of attributes they execute the ProofGen
+   operation of [BBS] with the header set to a specified channel binding
+   or origin identifer.  For HTTP applications it is RECOMMENDED that
+   the origin be used.  The set of attributes they wish to show is
+   communicated by means outside this draft.  They then transmit the
+   signature to the origin as a token.
+
+4.  HTTP Protocol
+
+   This section defines a HTTP based issuance and redemption protocol
+   for privacy-pass with public metadata, using BBS signatures.  The BBS
+   operations used are instantiated with the parameters defined by the
+   BBS_BLS12381G1_XMD:SHA-256_SSWU_RO_H2G_HM2S_ ciphersuite
+   (Section 6.2.2 (https://datatracker.ietf.org/doc/html/draft-irtf-
+   cfrg-bbs-signatures-03#name-bls12-381-sha-256) [BBS]).  The signed
+   attributes will consist of the public metadata values, giving to the
+   Client the ability to selectively disclose distinguee subsets of
+   metadata during different Token redemption attempts.
+
+4.1.  Token Issuance
+
+   //TODO: Describe Client and Issuer inputs to the protocol
+
+4.1.1.  Client-to-Issuer Request
+
+   The Client first creates an issuance request message using the Issuer
+   key identifier as follows:
+
+struct {
+  uint16_t token_type = 0x0003;  /* Type BBS with "BLS12-381-SHA-256" */
+  uint8_t truncated_token_key_id;
+} TokenRequest;
+
+   The structure fields are defines bellow:
+
+   *  "token_type" is a 2-octet integer, which matches the type in the
+      challenge.
+
+   *  "truncated_token_key_id" is the least significant byte of the
+      token_key_id in network byte order.
+
+   Using the constructed TokenRequest, the Client builds an
+   ExtendedTokenRequest, defined in [PPEXT], as follows:
+
+   struct {
+     TokenRequest request;
+     Extensions extensions;
+   } ExtendedTokenRequest;
+
+   The contents of the ExtendedTokenRequest.extensions value, MUST match
+   the Client's configured extensions value.  The Client then generates
+   an HTTP POST request to send to the Issuer Request URI, with the
+   ExtendedTokenRequest as the content.
+
+4.1.2.  Issuer-to-Client Response
+
+   Upon receiving the Client's request, the Issuer needs to validate the
+   following:
+
+   *  The ExtendedTokenRequest.TokenRequest contains a supported
+      token_type.
+
+   *  The ExtendedTokenRequest.TokenRequest contains a
+      truncated_token_key_id that corresponds to the truncated key ID of
+      an Issuer Public Key.
+
+   *  The ExtendedTokenRequest.extensions value is permitted by the
+      Issuer's policy.
+
+   If any of these conditions is not met, the Issuer MUST return an HTTP
+   400 error to the Client.  Otherwise, if the Issuer is willing to
+   produce a token for the Client, they will complete the issuance flow
+   by signing the agreed upon extension values.  To do so, they first
+   must parse the content value ExtendedTokenRequest.extensions and if
+   successful, yield the extensions array.  Then, they must sign those
+   extensions, using the following steps:
+
+   header = 0x0003
+   signature = Sign(skI, pkI,  header, extensions)
+
+   The Sign function is defined in Section 3.4.1
+   (https://www.ietf.org/archive/id/draft-irtf-cfrg-bbs-signatures-
+   03.html#name-signature-generation-sign) of [BBS] and is instantiated
+   with the parameters defined by the "BLS12-381-SHA-256" ciphersuite
+   (Section 6.2.2 (https://datatracker.ietf.org/doc/html/draft-irtf-
+   cfrg-bbs-signatures-03#name-bls12-381-sha-256) of [BBS]).  The result
+   is encoded and transmitted to the client in the following
+   TokenResponse structure:
+
+   struct {
+     uint8_t signature[octet_point_length + octet_scalar_length];
+   } TokenResponse;
+
+   The octet_point_length and octet_scalar_length constants are defined
+   in Section 6.2 (https://www.ietf.org/archive/id/draft-irtf-cfrg-bbs-
+   signatures-03.html#name-bls12-381-sha-256) of [BBS].
+
+   The Issuer generates an HTTP response with status code 200 whose
+   content consists of TokenResponse, with the content type set as
+   "application/private-token-response".
+
+4.1.3.  Finalization
+
+   Upon receipt, the Client handles the response and, if successful,
+   deserializes the content values TokenResponse.signature yielding the
+   signature value. the Client MUST validate the produced signature as
+   follows:
+
+   result = Verify(pkI, signature, 0x0003, extensions)
+
+   The Verify function is defined in Section 3.4.2
+   (https://www.ietf.org/archive/id/draft-irtf-cfrg-bbs-signatures-
+   03.html#name-signature-verification-veri) of [BBS] and is
+   instantiated with the parameters defined by the "BLS12-381-SHA-256"
+   ciphersuite (Section 6.2.2 (https://datatracker.ietf.org/doc/html/
+   draft-irtf-cfrg-bbs-signatures-03#name-bls12-381-sha-256) of [BBS]).
+   If the result is not VALID, the Client MUST abort.
+
+   If signature verification is successful, the Client can generate
+   multiple tokens with unlinkable authenticator values, using the
+   procedure defined in Section 4.2.1.
+
+4.1.4.  Issuer Configuration
+
+   //TODO
+
+4.2.  Token Redemption
+
+   This section describes an HTTP based protocol that allows Clients to
+   generate and redeem tokens, using a TokenResponse received by the
+   Issuer during the Issuance protocol defined in Section 4.1.  The
+   TokenResponse MUST first be verified using the procedure defined in
+   Section 4.1.3.
+
+4.2.1.  Token Generation
+
+   The Client can generate multiple Tokens with unlinkable authenticator
+   values, using the ProofGen function as defined in Section 3.4.3
+   (https://datatracker.ietf.org/doc/html/draft-irtf-cfrg-bbs-
+   signatures-03#name-proof-generation-proofgen) of [BBS], instantiated
+   with the parameters defined by the "BLS12-381-SHA-256" ciphersuite
+   (Section 6.2.2 (https://datatracker.ietf.org/doc/html/draft-irtf-
+   cfrg-bbs-signatures-03#name-bls12-381-sha-256) of [BBS]).
+
+   The Client can also select a subset of the extensions to disclose to
+   the Origin.  The means with which a Client will negotiate with the
+   Origin the required extensions is outside the scope of this document.
+   Let disclosed_extensions_indexes to be an ordered array of 2 byte
+   integers from 1 to 65535, corresponding to the indexes that the
+   extensions the Client wishes to disclose have, in the
+   Extensions.extensions array.  The client produces an authenticator
+   value as follows:
+
+   nonce = random(32)
+   challenge_digest = SHA256(challenge)
+   header = 0x0003
+   presentation_header = concat(nonce, challenge_digest)
+
+   authenticator = ProofGen(pkI,
+                            signature,
+                            header,
+                            presentation_header,
+                            extensions,
+                            disclosed_extensions_indexes)
+
+   If the above calculation succeeds, the Client constructs a Token as
+   follows:
+
+   struct {
+     uint16_t token_type = 0x0003;
+     uint8_t nonce[32];
+     uint8_t challenge_digest[32];
+     uint8_t token_key_id[Nid];
+     uint16_t disclosed_extensions_indexes<0..2^16-1>
+     uint8_t authenticator<0..Nu>;
+   } Token;
+
+   The maximum length of the authenticator Nu is defined as Nu = 2 *
+   octet_point_length + (2^16 + 2) * octet_scalar_length.  Note, the
+   addition of the disclosed_extensions_indexes field to the Token
+   structure defined in [PPAUTH].
+
+4.2.2.  Token Verification
+
+   Upon receiving the Token, the Origin MUST parse it and validate that
+   all the fields have the correct length.  Additionally, the Origin
+   MUST parse the Token.disclosed_extensions_indexes content value and
+   verify that it comprised from an ordered array of integers from 1 to
+   65535.  Lastly, the Origin MUST also parse the received (disclosed)
+   Extensions.extensions value and create the array
+   disclosed_extensions.  Verifying a Token requires knowledge of the
+   Issuer's public key (pkI) corresponding to the Token.token_key_id
+   value.  The Origin can verify the Token and corresponding disclosed
+   extensions as follows:
+
+   header = 0x0003
+   presentation_header = concat(Token.nonce, Token.challenge_digest)
+
+   res = ProofVerify(pkI,
+                     Token.authenticator,
+                     header,
+                     presentation_header,
+                     disclosed_extensions,
+                     Token.disclosed_extensions_indexes)
+
+   The ProofVerify function is defined in Section 3.4.4 of [BBS],
+   instantiated with the parameters defined by the "BLS12-381-SHA-256"
+   ciphersuite (Section 6.2.2 (https://datatracker.ietf.org/doc/html/
+   draft-irtf-cfrg-bbs-signatures-03#name-bls12-381-sha-256) of [BBS]).
+
+5.  Privacy Pass integration
+
+   In [PPARCH] parameters are provided that any instantiation must
+   amend.  TODO: put values in
+
+6.  Security Considerations
+
+   The position of a revealed attribute, as well as the number of
+   unrevealed attributes, is revealed to the origin.  Applications MUST
+   ensure all clients recieve the same set of attributes in the same
+   positions.  As the redeemed tokens are not single use, instantiations
+   MUST specify a channel binding to use or origin identifier.
+
+7.  IANA Considerations
+
+   This document has no IANA actions.
+
+8.  References
+
+8.1.  Normative References
+
+   [BBS]      Looker, T., Kalos, V., Whitehead, A., and M. Lodder, "The
+              BBS Signature Scheme", Work in Progress, Internet-Draft,
+              draft-irtf-cfrg-bbs-signatures-03, 10 July 2023,
+              <https://datatracker.ietf.org/doc/html/draft-irtf-cfrg-
+              bbs-signatures-03>.
+
+   [PPEXT]    Hendrickson, S. and C. A. Wood, "Public Metadata
+              Issuance", Work in Progress, Internet-Draft, draft-
+              hendrickson-privacypass-public-metadata-02, 30 June 2023,
+              <https://datatracker.ietf.org/doc/html/draft-hendrickson-
+              privacypass-public-metadata-02>.
+
+   [RFC2119]  Bradner, S., "Key words for use in RFCs to Indicate
+              Requirement Levels", BCP 14, RFC 2119,
+              DOI 10.17487/RFC2119, March 1997,
+              <https://www.rfc-editor.org/rfc/rfc2119>.
+
+   [RFC8174]  Leiba, B., "Ambiguity of Uppercase vs Lowercase in RFC
+              2119 Key Words", BCP 14, RFC 8174, DOI 10.17487/RFC8174,
+              May 2017, <https://www.rfc-editor.org/rfc/rfc8174>.
+
+8.2.  Informative References
+
+   [PPARCH]   Davidson, A., Iyengar, J., and C. A. Wood, "The Privacy
+              Pass Architecture", Work in Progress, Internet-Draft,
+              draft-ietf-privacypass-architecture-13, 15 June 2023,
+              <https://datatracker.ietf.org/doc/html/draft-ietf-
+              privacypass-architecture-13>.
+
+   [PPAUTH]   Pauly, T., Valdez, S., and C. A. Wood, "The Privacy Pass
+              HTTP Authentication Scheme", Work in Progress, Internet-
+              Draft, draft-ietf-privacypass-auth-scheme-11, 23 June
+              2023, <https://datatracker.ietf.org/doc/html/draft-ietf-
+              privacypass-auth-scheme-11>.
+
+Acknowledgments
+
+   TODO acknowledge.
+
+Author's Address
+
+   Watson Ladd
+   Akamai Technologies
+   Email: watsonbladd@gmail.com
