@@ -4,8 +4,8 @@
 
 Privacy Pass                                                     W. Ladd
 Internet-Draft                                       Akamai Technologies
-Intended status: Informational                          1 September 2023
-Expires: 4 March 2024
+Intended status: Informational                          27 November 2023
+Expires: 30 May 2024
 
 
                           BBS for PrivacyPass
@@ -52,7 +52,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 4 March 2024.
+   This Internet-Draft will expire on 30 May 2024.
 
 Copyright Notice
 
@@ -126,7 +126,7 @@ Table of Contents
    issuance URL, as well as a common understanding of the meaning of
    each attribute string (sequence of octets).  E.g an age might be
    encoded as a single octet, or in ASCII numeric base 10
-   represnetation, or a fixed field, and could be the first attribute in
+   representation, or a fixed field, and could be the first attribute in
    the list.
 
    After the successful completion of the Issuance protocol, the Client
@@ -448,15 +448,15 @@ Table of Contents
 
    [BBS]      Looker, T., Kalos, V., Whitehead, A., and M. Lodder, "The
               BBS Signature Scheme", Work in Progress, Internet-Draft,
-              draft-irtf-cfrg-bbs-signatures-03, 10 July 2023,
+              draft-irtf-cfrg-bbs-signatures-04, 30 October 2023,
               <https://datatracker.ietf.org/doc/html/draft-irtf-cfrg-
-              bbs-signatures-03>.
+              bbs-signatures-04>.
 
    [PPEXT]    Hendrickson, S. and C. A. Wood, "Public Metadata
               Issuance", Work in Progress, Internet-Draft, draft-
-              hendrickson-privacypass-public-metadata-02, 30 June 2023,
-              <https://datatracker.ietf.org/doc/html/draft-hendrickson-
-              privacypass-public-metadata-02>.
+              hendrickson-privacypass-public-metadata-03, 25 November
+              2023, <https://datatracker.ietf.org/doc/html/draft-
+              hendrickson-privacypass-public-metadata-03>.
 
    [RFC2119]  Bradner, S., "Key words for use in RFCs to Indicate
               Requirement Levels", BCP 14, RFC 2119,
@@ -471,15 +471,15 @@ Table of Contents
 
    [PPARCH]   Davidson, A., Iyengar, J., and C. A. Wood, "The Privacy
               Pass Architecture", Work in Progress, Internet-Draft,
-              draft-ietf-privacypass-architecture-14, 9 August 2023,
+              draft-ietf-privacypass-architecture-16, 25 September 2023,
               <https://datatracker.ietf.org/doc/html/draft-ietf-
-              privacypass-architecture-14>.
+              privacypass-architecture-16>.
 
    [PPAUTH]   Pauly, T., Valdez, S., and C. A. Wood, "The Privacy Pass
               HTTP Authentication Scheme", Work in Progress, Internet-
-              Draft, draft-ietf-privacypass-auth-scheme-12, 9 August
+              Draft, draft-ietf-privacypass-auth-scheme-15, 23 October
               2023, <https://datatracker.ietf.org/doc/html/draft-ietf-
-              privacypass-auth-scheme-12>.
+              privacypass-auth-scheme-15>.
 
 Acknowledgments
 

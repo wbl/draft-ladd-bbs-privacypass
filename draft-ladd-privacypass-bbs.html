@@ -9,24 +9,24 @@
 <meta content="
        Existing token types in privacy pass conflate attribution with rate limiting. This document describes a token type where the issuer attests to a set of properties of the client, which the client can then selectively prove to the origin. Repeated showings of the same credential are unlinkable, unlike other token types in privacy pass. 
     " name="description">
-<meta content="xml2rfc 3.18.0" name="generator">
+<meta content="xml2rfc 3.18.2" name="generator">
 <meta content="anonymous credentials" name="keyword">
 <meta content="draft-ladd-privacypass-bbs-latest" name="ietf.draft">
 <!-- Generator version information:
-  xml2rfc 3.18.0
-    Python 3.11.4
+  xml2rfc 3.18.2
+    Python 3.11.6
     ConfigArgParse 1.5.3
     google-i18n-address 3.1.0
     intervaltree 3.1.0
     Jinja2 3.1.2
     lxml 4.9.3
-    platformdirs 3.10.0
+    platformdirs 4.0.0
     pycountry 22.3.5
     PyYAML 6.0
     requests 2.31.0
     setuptools 67.7.2
     six 1.16.0
-    wcwidth 0.2.6
+    wcwidth 0.2.10
 -->
 <link href="draft-ladd-privacypass-bbs.xml" rel="alternate" type="application/rfc+xml">
 <link href="#copyright" rel="license">
@@ -649,7 +649,7 @@ sub, sup {
 }
 #toc nav li {
   line-height: 1.3em;
-  margin: 0.75em 0;
+  margin: 2px 0;
   padding-left: 1.2em;
   text-indent: -1.2em;
 }
@@ -742,7 +742,7 @@ hr.addr {
     z-index: 2;
     top: 0;
     right: 0;
-    padding: 0;
+    padding: 1px 0 0 0;
     margin: 0;
     border-bottom: 1px solid #ccc;
     opacity: 0.6;
@@ -866,16 +866,13 @@ hr.addr {
     border-top: none;
     padding-top: 0;
   }
-  figure, pre {
+  figure, pre, .vcard {
     page-break-inside: avoid;
-  }
-  figure {
-    overflow: scroll;
   }
   h1, h2, h3, h4, h5, h6 {
     page-break-after: avoid;
   }
-  h2+*, h3+*, h4+*, h5+*, h6+* {
+  :is(h2, h3, h4, h5, h6)+*, dd {
     page-break-before: avoid;
   }
   pre {
@@ -888,6 +885,9 @@ hr.addr {
   }
   td {
     border-top: 1px solid #ddd;
+  }
+  .toplink {
+    display: none;
   }
 }
 
@@ -989,28 +989,6 @@ address div.right {
   text-align: right;
 }
 
-/* Give the table caption label the same styling as the figcaption */
-
-@media print {
-  .toplink {
-    display: none;
-  }
-
-  /* avoid overwriting the top border line with the ToC header */
-  #toc {
-    padding-top: 1px;
-  }
-
-  /* Avoid page breaks inside dl and author address entries */
-  dd {
-    page-break-before: avoid;
-  }
-  .vcard {
-    page-break-inside: avoid;
-  }
-
-}
-
 /* Dark mode. */
 @media (prefers-color-scheme: dark) {
 :root {
@@ -1047,11 +1025,11 @@ svg :is([fill="white"], [fill^="#fff"]) {
 <thead><tr>
 <td class="left">Internet-Draft</td>
 <td class="center">BBS PPAS</td>
-<td class="right">September 2023</td>
+<td class="right">November 2023</td>
 </tr></thead>
 <tfoot><tr>
 <td class="left">Ladd</td>
-<td class="center">Expires 4 March 2024</td>
+<td class="center">Expires 30 May 2024</td>
 <td class="right">[Page]</td>
 </tr></tfoot>
 </table>
@@ -1064,12 +1042,12 @@ svg :is([fill="white"], [fill^="#fff"]) {
 <dd class="internet-draft">draft-ladd-privacypass-bbs-latest</dd>
 <dt class="label-published">Published:</dt>
 <dd class="published">
-<time datetime="2023-09-01" class="published">1 September 2023</time>
+<time datetime="2023-11-27" class="published">27 November 2023</time>
     </dd>
 <dt class="label-intended-status">Intended Status:</dt>
 <dd class="intended-status">Informational</dd>
 <dt class="label-expires">Expires:</dt>
-<dd class="expires"><time datetime="2024-03-04">4 March 2024</time></dd>
+<dd class="expires"><time datetime="2024-05-30">30 May 2024</time></dd>
 <dt class="label-authors">Author:</dt>
 <dd class="authors">
 <div class="author">
@@ -1119,7 +1097,7 @@ svg :is([fill="white"], [fill^="#fff"]) {
         time. It is inappropriate to use Internet-Drafts as reference
         material or to cite them other than as "work in progress."<a href="#section-boilerplate.1-3" class="pilcrow">¶</a></p>
 <p id="section-boilerplate.1-4">
-        This Internet-Draft will expire on 4 March 2024.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
+        This Internet-Draft will expire on 30 May 2024.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="copyright">
@@ -1267,7 +1245,7 @@ appear in all capitals, as shown here.<a href="#section-2-1" class="pilcrow">¶<
 <a href="#section-3" class="section-number selfRef">3. </a><a href="#name-protocol-overview" class="section-name selfRef">Protocol Overview</a>
       </h2>
 <p id="section-3-1">This protocol defines the use of Privacy Pass with selectively disclosable attributes, using <span>[<a href="#BBS" class="cite xref">BBS</a>]</span> signatures and zero-knowledge proofs. Those attributes must be agreed upon by Client, Attester, and Issuer during issuance. Example of such attributes include public metadata values (<span>[<a href="#PPEXT" class="cite xref">PPEXT</a>]</span>).<a href="#section-3-1" class="pilcrow">¶</a></p>
-<p id="section-3-2">To run this protocol the Issuer must have a public key and an issuance URL, as well as a common understanding of the meaning of each attribute string (sequence of octets). E.g an age might be encoded as a single octet, or in ASCII numeric base 10 represnetation, or a fixed field, and could be the first attribute in the list.<a href="#section-3-2" class="pilcrow">¶</a></p>
+<p id="section-3-2">To run this protocol the Issuer must have a public key and an issuance URL, as well as a common understanding of the meaning of each attribute string (sequence of octets). E.g an age might be encoded as a single octet, or in ASCII numeric base 10 representation, or a fixed field, and could be the first attribute in the list.<a href="#section-3-2" class="pilcrow">¶</a></p>
 <p id="section-3-3">After the successful completion of the Issuance protocol, the Client is able to use the received <code>TokenResponse</code> to generate multiple unlinkable tokens.<a href="#section-3-3" class="pilcrow">¶</a></p>
 <div id="issuance-over-generic-transports">
 <section id="section-3.1">
@@ -1340,9 +1318,11 @@ struct {
 </div>
 <p id="section-4.1.1-3">The structure fields are defines bellow:<a href="#section-4.1.1-3" class="pilcrow">¶</a></p>
 <ul class="normal">
-<li class="normal" id="section-4.1.1-4.1">"token_type" is a 2-octet integer, which matches the type in the challenge.<a href="#section-4.1.1-4.1" class="pilcrow">¶</a>
+<li class="normal" id="section-4.1.1-4.1">
+              <p id="section-4.1.1-4.1.1">"token_type" is a 2-octet integer, which matches the type in the challenge.<a href="#section-4.1.1-4.1.1" class="pilcrow">¶</a></p>
 </li>
-            <li class="normal" id="section-4.1.1-4.2">"truncated_token_key_id" is the least significant byte of the token_key_id in network byte order.<a href="#section-4.1.1-4.2" class="pilcrow">¶</a>
+            <li class="normal" id="section-4.1.1-4.2">
+              <p id="section-4.1.1-4.2.1">"truncated_token_key_id" is the least significant byte of the token_key_id in network byte order.<a href="#section-4.1.1-4.2.1" class="pilcrow">¶</a></p>
 </li>
           </ul>
 <p id="section-4.1.1-5">Using the constructed <code>TokenRequest</code>, the Client builds an <code>ExtendedTokenRequest</code>, defined in <span>[<a href="#PPEXT" class="cite xref">PPEXT</a>]</span>, as follows:<a href="#section-4.1.1-5" class="pilcrow">¶</a></p>
@@ -1364,11 +1344,14 @@ struct {
           </h4>
 <p id="section-4.1.2-1">Upon receiving the Client's request, the Issuer needs to validate the following:<a href="#section-4.1.2-1" class="pilcrow">¶</a></p>
 <ul class="normal">
-<li class="normal" id="section-4.1.2-2.1">The <code>ExtendedTokenRequest.TokenRequest</code> contains a supported <code>token_type</code>.<a href="#section-4.1.2-2.1" class="pilcrow">¶</a>
+<li class="normal" id="section-4.1.2-2.1">
+              <p id="section-4.1.2-2.1.1">The <code>ExtendedTokenRequest.TokenRequest</code> contains a supported <code>token_type</code>.<a href="#section-4.1.2-2.1.1" class="pilcrow">¶</a></p>
 </li>
-            <li class="normal" id="section-4.1.2-2.2">The <code>ExtendedTokenRequest.TokenRequest</code> contains a <code>truncated_token_key_id</code> that corresponds to the truncated key ID of an Issuer Public Key.<a href="#section-4.1.2-2.2" class="pilcrow">¶</a>
+            <li class="normal" id="section-4.1.2-2.2">
+              <p id="section-4.1.2-2.2.1">The <code>ExtendedTokenRequest.TokenRequest</code> contains a <code>truncated_token_key_id</code> that corresponds to the truncated key ID of an Issuer Public Key.<a href="#section-4.1.2-2.2.1" class="pilcrow">¶</a></p>
 </li>
-            <li class="normal" id="section-4.1.2-2.3">The <code>ExtendedTokenRequest.extensions</code> value is permitted by the Issuer's policy.<a href="#section-4.1.2-2.3" class="pilcrow">¶</a>
+            <li class="normal" id="section-4.1.2-2.3">
+              <p id="section-4.1.2-2.3.1">The <code>ExtendedTokenRequest.extensions</code> value is permitted by the Issuer's policy.<a href="#section-4.1.2-2.3.1" class="pilcrow">¶</a></p>
 </li>
           </ul>
 <p id="section-4.1.2-3">If any of these conditions is not met, the Issuer <span class="bcp14">MUST</span> return an HTTP 400 error to the Client. Otherwise, if the Issuer is willing to produce a token for the Client, they will complete the issuance flow by signing the agreed upon extension values. To do so, they first must parse the content value <code>ExtendedTokenRequest.extensions</code> and if successful, yield the extensions array. Then, they must sign those extensions, using the following steps:<a href="#section-4.1.2-3" class="pilcrow">¶</a></p>
@@ -1531,6 +1514,7 @@ Reference: This document<a href="#section-8-2" class="pilcrow">¶</a></p>
       <h2 id="name-references">
 <a href="#section-9" class="section-number selfRef">9. </a><a href="#name-references" class="section-name selfRef">References</a>
       </h2>
+<div id="sec-normative-references">
 <section id="section-9.1">
         <h3 id="name-normative-references">
 <a href="#section-9.1" class="section-number selfRef">9.1. </a><a href="#name-normative-references" class="section-name selfRef">Normative References</a>
@@ -1538,11 +1522,11 @@ Reference: This document<a href="#section-8-2" class="pilcrow">¶</a></p>
 <dl class="references">
 <dt id="BBS">[BBS]</dt>
         <dd>
-<span class="refAuthor">Looker, T.</span>, <span class="refAuthor">Kalos, V.</span>, <span class="refAuthor">Whitehead, A.</span>, and <span class="refAuthor">M. Lodder</span>, <span class="refTitle">"The BBS Signature Scheme"</span>, <span class="refContent">Work in Progress</span>, <span class="seriesInfo">Internet-Draft, draft-irtf-cfrg-bbs-signatures-03</span>, <time datetime="2023-07-10" class="refDate">10 July 2023</time>, <span>&lt;<a href="https://datatracker.ietf.org/doc/html/draft-irtf-cfrg-bbs-signatures-03">https://datatracker.ietf.org/doc/html/draft-irtf-cfrg-bbs-signatures-03</a>&gt;</span>. </dd>
+<span class="refAuthor">Looker, T.</span>, <span class="refAuthor">Kalos, V.</span>, <span class="refAuthor">Whitehead, A.</span>, and <span class="refAuthor">M. Lodder</span>, <span class="refTitle">"The BBS Signature Scheme"</span>, <span class="refContent">Work in Progress</span>, <span class="seriesInfo">Internet-Draft, draft-irtf-cfrg-bbs-signatures-04</span>, <time datetime="2023-10-30" class="refDate">30 October 2023</time>, <span>&lt;<a href="https://datatracker.ietf.org/doc/html/draft-irtf-cfrg-bbs-signatures-04">https://datatracker.ietf.org/doc/html/draft-irtf-cfrg-bbs-signatures-04</a>&gt;</span>. </dd>
 <dd class="break"></dd>
 <dt id="PPEXT">[PPEXT]</dt>
         <dd>
-<span class="refAuthor">Hendrickson, S.</span> and <span class="refAuthor">C. A. Wood</span>, <span class="refTitle">"Public Metadata Issuance"</span>, <span class="refContent">Work in Progress</span>, <span class="seriesInfo">Internet-Draft, draft-hendrickson-privacypass-public-metadata-02</span>, <time datetime="2023-06-30" class="refDate">30 June 2023</time>, <span>&lt;<a href="https://datatracker.ietf.org/doc/html/draft-hendrickson-privacypass-public-metadata-02">https://datatracker.ietf.org/doc/html/draft-hendrickson-privacypass-public-metadata-02</a>&gt;</span>. </dd>
+<span class="refAuthor">Hendrickson, S.</span> and <span class="refAuthor">C. A. Wood</span>, <span class="refTitle">"Public Metadata Issuance"</span>, <span class="refContent">Work in Progress</span>, <span class="seriesInfo">Internet-Draft, draft-hendrickson-privacypass-public-metadata-03</span>, <time datetime="2023-11-25" class="refDate">25 November 2023</time>, <span>&lt;<a href="https://datatracker.ietf.org/doc/html/draft-hendrickson-privacypass-public-metadata-03">https://datatracker.ietf.org/doc/html/draft-hendrickson-privacypass-public-metadata-03</a>&gt;</span>. </dd>
 <dd class="break"></dd>
 <dt id="RFC2119">[RFC2119]</dt>
         <dd>
@@ -1554,6 +1538,8 @@ Reference: This document<a href="#section-8-2" class="pilcrow">¶</a></p>
 <dd class="break"></dd>
 </dl>
 </section>
+</div>
+<div id="sec-informative-references">
 <section id="section-9.2">
         <h3 id="name-informative-references">
 <a href="#section-9.2" class="section-number selfRef">9.2. </a><a href="#name-informative-references" class="section-name selfRef">Informative References</a>
@@ -1561,14 +1547,15 @@ Reference: This document<a href="#section-8-2" class="pilcrow">¶</a></p>
 <dl class="references">
 <dt id="PPARCH">[PPARCH]</dt>
         <dd>
-<span class="refAuthor">Davidson, A.</span>, <span class="refAuthor">Iyengar, J.</span>, and <span class="refAuthor">C. A. Wood</span>, <span class="refTitle">"The Privacy Pass Architecture"</span>, <span class="refContent">Work in Progress</span>, <span class="seriesInfo">Internet-Draft, draft-ietf-privacypass-architecture-14</span>, <time datetime="2023-08-09" class="refDate">9 August 2023</time>, <span>&lt;<a href="https://datatracker.ietf.org/doc/html/draft-ietf-privacypass-architecture-14">https://datatracker.ietf.org/doc/html/draft-ietf-privacypass-architecture-14</a>&gt;</span>. </dd>
+<span class="refAuthor">Davidson, A.</span>, <span class="refAuthor">Iyengar, J.</span>, and <span class="refAuthor">C. A. Wood</span>, <span class="refTitle">"The Privacy Pass Architecture"</span>, <span class="refContent">Work in Progress</span>, <span class="seriesInfo">Internet-Draft, draft-ietf-privacypass-architecture-16</span>, <time datetime="2023-09-25" class="refDate">25 September 2023</time>, <span>&lt;<a href="https://datatracker.ietf.org/doc/html/draft-ietf-privacypass-architecture-16">https://datatracker.ietf.org/doc/html/draft-ietf-privacypass-architecture-16</a>&gt;</span>. </dd>
 <dd class="break"></dd>
 <dt id="PPAUTH">[PPAUTH]</dt>
       <dd>
-<span class="refAuthor">Pauly, T.</span>, <span class="refAuthor">Valdez, S.</span>, and <span class="refAuthor">C. A. Wood</span>, <span class="refTitle">"The Privacy Pass HTTP Authentication Scheme"</span>, <span class="refContent">Work in Progress</span>, <span class="seriesInfo">Internet-Draft, draft-ietf-privacypass-auth-scheme-12</span>, <time datetime="2023-08-09" class="refDate">9 August 2023</time>, <span>&lt;<a href="https://datatracker.ietf.org/doc/html/draft-ietf-privacypass-auth-scheme-12">https://datatracker.ietf.org/doc/html/draft-ietf-privacypass-auth-scheme-12</a>&gt;</span>. </dd>
+<span class="refAuthor">Pauly, T.</span>, <span class="refAuthor">Valdez, S.</span>, and <span class="refAuthor">C. A. Wood</span>, <span class="refTitle">"The Privacy Pass HTTP Authentication Scheme"</span>, <span class="refContent">Work in Progress</span>, <span class="seriesInfo">Internet-Draft, draft-ietf-privacypass-auth-scheme-15</span>, <time datetime="2023-10-23" class="refDate">23 October 2023</time>, <span>&lt;<a href="https://datatracker.ietf.org/doc/html/draft-ietf-privacypass-auth-scheme-15">https://datatracker.ietf.org/doc/html/draft-ietf-privacypass-auth-scheme-15</a>&gt;</span>. </dd>
 <dd class="break"></dd>
 </dl>
 </section>
+</div>
 </section>
 <div id="acknowledgments">
 <section id="appendix-A">
