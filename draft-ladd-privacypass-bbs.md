@@ -49,7 +49,7 @@ In 2004 Boneh-Boyen-Shacham introduced the eponymous BBS signature. The BBS sign
 
 This protocol defines the use of Privacy Pass with selectively disclosable attributes, using {{BBS}} signatures and zero-knowledge proofs. Those attributes must be agreed upon by Client, Attester, and Issuer during issuance. Example of such attributes include public metadata values ({{!PPEXT=I-D.draft-hendrickson-privacypass-public-metadata}}).
 
-To run this protocol the Issuer must have a public key and an issuance URL, as well as a common understanding of the meaning of each attribute string (sequence of octets). E.g an age might be encoded as a single octet, or in ASCII numeric base 10 represnetation, or a fixed field, and could be the first attribute in the list.
+To run this protocol the Issuer must have a public key and an issuance URL, as well as a common understanding of the meaning of each attribute string (sequence of octets). E.g an age might be encoded as a single octet, or in ASCII numeric base 10 representation, or a fixed field, and could be the first attribute in the list.
 
 After the successful completion of the Issuance protocol, the Client is able to use the received `TokenResponse` to generate multiple unlinkable tokens.
 
